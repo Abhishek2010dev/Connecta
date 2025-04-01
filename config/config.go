@@ -1,9 +1,6 @@
 package config
 
-type ServerConfig struct {
-	Host string
-	Port string
-}
+import _ "github.com/joho/godotenv/autoload"
 
 type Config struct {
 	server ServerConfig
@@ -11,9 +8,6 @@ type Config struct {
 
 func Load() Config {
 	return Config{
-		server: ServerConfig{
-			Host: getEnv("SERVER_HOST"),
-			Port: getEnv("SERVER_PORT"),
-		},
+		server: NewServerConfig(),
 	}
 }
