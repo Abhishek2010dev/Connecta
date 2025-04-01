@@ -7,7 +7,9 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	stack := middleware.CreateStack()
+	stack := middleware.CreateStack(
+		middleware.Logging,
+	)
 	router := http.NewServeMux()
 	return stack(router)
 }
