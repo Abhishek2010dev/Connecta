@@ -1,8 +1,13 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
 
-func (s *Server) RegisterRoutes() *http.ServeMux {
+	"github.com/Abhishek2010dev/Connecta/internal/middleware"
+)
+
+func (s *Server) RegisterRoutes() http.Handler {
+	stack := middleware.CreateStack()
 	router := http.NewServeMux()
-	return router
+	return stack(router)
 }
