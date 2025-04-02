@@ -11,7 +11,7 @@ type postgresqlDatabase struct {
 	db *sql.DB
 }
 
-func New(cfg config.Database) (*DBProvider, error) {
+func New(cfg config.Database) (Provider, error) {
 	db, err := sql.Open("postgres", cfg.URL)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create connection: %w", err)
@@ -27,4 +27,12 @@ func New(cfg config.Database) (*DBProvider, error) {
 	}
 
 	return &postgresqlDatabase{db: db}, nil
+}
+
+func (p *postgresqlDatabase) Get() *sql.DB {
+	panic("not implemented") // TODO: Implement
+}
+
+func (p *postgresqlDatabase) Close() error {
+	panic("not implemented") // TODO: Implement
 }

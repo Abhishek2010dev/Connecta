@@ -2,7 +2,7 @@ package database
 
 import "database/sql"
 
-type DBProvider interface {
+type Provider interface {
 	Get() *sql.DB
 	Close() error
 }
