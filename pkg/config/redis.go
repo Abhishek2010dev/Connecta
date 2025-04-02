@@ -6,6 +6,6 @@ type Redis struct {
 
 func NewRedis() Redis {
 	return Redis{
-		URL: getEnv("REDIS_URL"),
+		URL: LoadEnv("REDIS_URL"),
 	}
 }

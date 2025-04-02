@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func getEnv(key string) string {
+func LoadEnv(key string) string {
 	value, exits := os.LookupEnv(key)
 	if value == "" || !exits {
 		log.Fatalf("Error: Missing environment variable %s", key)
@@ -15,16 +15,16 @@ func getEnv(key string) string {
 	return value
 }
 
-func getDurationEnv(key string) time.Duration {
-	timeout, err := time.ParseDuration(getEnv(key))
+func LoadEnvDuration(key string) time.Duration {
+	timeout, err := time.ParseDuration(LoadEnv(key))
 	if err != nil {
 		log.Fatalf("Error: Can not parse %s env as duration", key)
 	}
 	return timeout
 }
 
-func getIntEnv(key string) int {
-	value, err := strconv.Atoi(getEnv(key))
+func LoadEnvInt(key string) int {
+	value, err := strconv.Atoi(LoadEnv(key))
 	if err != nil {
 		log.Fatalf("Error: Can not parse %s env as int", key)
 	}

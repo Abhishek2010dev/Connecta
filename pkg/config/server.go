@@ -12,8 +12,8 @@ type Server struct {
 
 func NewServer() Server {
 	return Server{
-		Host:    getEnv("SERVER_HOST"),
-		Port:    getEnv("SERVER_PORT"),
-		Timeout: getDurationEnv("SERVER_TIMEOUT"),
+		Host:    LoadEnv("SERVER_HOST"),
+		Port:    LoadEnv("SERVER_PORT"),
+		Timeout: LoadEnvDuration("SERVER_TIMEOUT"),
 	}
 }
