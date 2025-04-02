@@ -9,3 +9,7 @@ type redisClient struct {
 func (c *redisClient) Get() *redis.Client {
 	return c.client
 }
+
+func (c *redisClient) Close() error {
+	return c.Close()
+}
