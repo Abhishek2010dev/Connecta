@@ -3,6 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	_ "github.com/lib/pq"
 
 	"github.com/Abhishek2010dev/Connecta/pkg/config"
 )
@@ -34,5 +37,6 @@ func (p *postgresqlDatabase) Get() *sql.DB {
 }
 
 func (p *postgresqlDatabase) Close() error {
+	log.Println("Closing connection for database")
 	return p.db.Close()
 }
