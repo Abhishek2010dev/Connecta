@@ -30,7 +30,7 @@ func New(cfg config.Database) (Provider, error) {
 }
 
 func (p *postgresqlDatabase) Get() *sql.DB {
-	panic("not implemented") // TODO: Implement
+	return p.db
 }
 
 func (p *postgresqlDatabase) Close() error {
