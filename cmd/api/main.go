@@ -8,7 +8,9 @@ import (
 )
 
 func main() {
-	server := server.New(config.Load())
+	cfg := config.Load()
+	server := server.New(cfg)
+	log.Printf("Server started at %s:%s", cfg.Server.Host, cfg.Server.Port)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal("Failed to started server:", err)
 	}
