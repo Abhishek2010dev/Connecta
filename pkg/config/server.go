@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"time"
 )
 
@@ -11,15 +10,10 @@ type Server struct {
 	Timeout time.Duration
 }
 
-func NewServerConfig() Server {
-	timeout, err := time.ParseDuration(getEnv("SERVER_TIMEOUT"))
-	if err != nil {
-		log.Fatal("Failed to parse timeout")
-	}
-
+func NewServer() Server {
 	return Server{
 		Host:    getEnv("SERVER_HOST"),
 		Port:    getEnv("SERVER_PORT"),
-		Timeout: timeout,
+		Timeout: getDurationEnv("SERVER_TIMEOUT"),
 	}
 }
