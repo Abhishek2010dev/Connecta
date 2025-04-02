@@ -6,15 +6,18 @@ import (
 	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/pkg/config"
+	"github.com/redis/go-redis/v9"
 )
 
 type Server struct {
-	db *sql.DB
+	db    *sql.DB
+	cache *redis.Client
 }
 
-func New(cfg config.Config, db *sql.DB) *http.Server {
+func New(cfg config.Config, db *sql.DB, cache *redis.Client) *http.Server {
 	NewServer := Server{
-		db: db,
+		db:    db,
+		cache: cache,
 	}
 
 	server := &http.Server{

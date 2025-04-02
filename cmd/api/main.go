@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/Abhishek2010dev/Connecta/internal/cache"
 	"github.com/Abhishek2010dev/Connecta/internal/database"
 	"github.com/Abhishek2010dev/Connecta/internal/server"
 	"github.com/Abhishek2010dev/Connecta/pkg/config"
@@ -17,7 +18,10 @@ func main() {
 	}
 	defer database.Close()
 
-	server := server.New(cfg, database.Get())
+	cache := cache.New(cfg.Redis)
+	defer cache.Close()
+
+	server := server.New(cfg, database.Get(), cache.Get())
 	log.Printf("Server is running at %s:%s", cfg.Server.Host, cfg.Server.Port)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal("Failed to start server:", err)
