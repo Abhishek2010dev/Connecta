@@ -34,5 +34,5 @@ func (p *postgresqlDatabase) Get() *sql.DB {
 }
 
 func (p *postgresqlDatabase) Close() error {
-	panic("not implemented") // TODO: Implement
+	return p.db.Close()
 }
