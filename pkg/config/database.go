@@ -13,8 +13,8 @@ type Database struct {
 func NewDatabase() Database {
 	return Database{
 		URL:             LoadEnv("DB_URL"),
-		MaxOpenConns:    LoadEnvInt("DB_MAX_OPEN_CONN"),
-		MaxIdleConns:    LoadEnvInt("DB_MAX_IDLE_CONN"),
+		MaxOpenConns:    LoadEnvInt("DB_MAX_OPEN_CONNS"),
+		MaxIdleConns:    LoadEnvInt("DB_MAX_IDLE_CONNS"),
 		ConnMaxLifetime: LoadEnvDuration("DB_CONN_MAX_LIFETIME"),
 		ConnMaxIdleTime: LoadEnvDuration("DB_CONN_MAX_IDLE_TIME"),
 	}
