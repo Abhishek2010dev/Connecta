@@ -18,8 +18,8 @@ func main() {
 	defer database.Close()
 
 	server := server.New(cfg, database.Get())
-	log.Printf("Server started at %s:%s", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Server is running at %s:%s", cfg.Server.Host, cfg.Server.Port)
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatal("Failed to started server:", err)
+		log.Fatal("Failed to start server:", err)
 	}
 }
