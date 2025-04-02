@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"fmt"
+
 	"github.com/Abhishek2010dev/Connecta/pkg/config"
 	"github.com/redis/go-redis/v9"
 )
@@ -9,11 +11,12 @@ type redisClient struct {
 	client *redis.Client
 }
 
-func New(cfg config.Redis) Provider {
-	client := redis.NewClient(&redis.Options{
-		Addr: cfg.URL,
-	})
-	return &redisClient{client}
+func New(cfg config.Redis) (Provider, error) {
+	opts, err := redis.ParseURL(cfg.URL)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse url: %w", err)
+	}
+	return &redisClient{client: redis.NewClient(opts)}, nil
 }
 
 func (c *redisClient) Get() *redis.Client {

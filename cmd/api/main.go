@@ -18,7 +18,10 @@ func main() {
 	}
 	defer database.Close()
 
-	cache := cache.New(cfg.Redis)
+	cache, err := cache.New(cfg.Redis)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer cache.Close()
 
 	server := server.New(cfg, database.Get(), cache.Get())
