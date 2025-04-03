@@ -29,6 +29,10 @@ func New(cfg config.Database) (Provider, error) {
 		return nil, fmt.Errorf("Failed to ping connection: %w", err)
 	}
 
+	if err := RunMigration(db); err != nil {
+		return nil, err
+	}
+
 	return &postgresqlDatabase{db: db}, nil
 }
 
