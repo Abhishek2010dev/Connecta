@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Abhishek2010dev/Connecta/pkg/config"
 	"github.com/redis/go-redis/v9"
@@ -16,6 +17,7 @@ func New(cfg config.Redis) (Provider, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse url: %w", err)
 	}
+	log.Println("Successfully connected to postgresql")
 	return &redisClient{client: redis.NewClient(opts)}, nil
 }
 
