@@ -46,10 +46,22 @@ func (u *userRepositoryImpl) ExitsByEmail(email string) (bool, error) {
 		if err == sql.ErrNoRows {
 			return false, nil
 		}
+		return false, fmt.Errorf("Failed to check email existence: %w", err)
 	}
-	panic("not implemented") // TODO: Implement
+	return true, nil
 }
 
 func (u *userRepositoryImpl) FindByEmail(email string) (*models.User, error) {
-	panic("not implemented") // TODO: Implement
+	query := "SELECT * FROM users WHERE email = $1"
+
+	var user models.User
+	row := u.db.QueryRow(query, email)
+	err := row.Scan(&user.Id, &user.Name, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("User does not exits: %w", err)
+		}
+		return nil, fmt.Errorf("Failed to find user by email %s: %w", email, err)
+	}
+	return &user, nil
 }
