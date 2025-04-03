@@ -40,6 +40,13 @@ func (u *userRepositoryImpl) Create(payload dto.CreateUserPayload) (int64, error
 }
 
 func (u *userRepositoryImpl) ExitsByEmail(email string) (bool, error) {
+	query := "SELECT 1 FROM users WHERE email = $1"
+	var exits int
+	if err := u.db.QueryRow(query, email).Scan(&exits); err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+	}
 	panic("not implemented") // TODO: Implement
 }
 
