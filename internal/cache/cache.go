@@ -17,7 +17,7 @@ func New(cfg config.Redis) (Provider, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse url: %w", err)
 	}
-	log.Println("Successfully connected to postgresql")
+	log.Println("Successfully connected to redis")
 	return &redisClient{client: redis.NewClient(opts)}, nil
 }
 
