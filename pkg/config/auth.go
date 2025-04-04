@@ -6,6 +6,6 @@ type Auth struct {
 
 func NewAuth() Auth {
 	return Auth{
-		JwtSecret: LoadEnv("Auth_Jwt_Secret"),
+		JwtSecret: LoadEnv("AUTH_JWT_SECRET"),
 	}
 }
