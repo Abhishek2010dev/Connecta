@@ -6,6 +6,7 @@ type Config struct {
 	Server
 	Database
 	Redis
+	Auth
 }
 
 func Load() Config {
@@ -13,5 +14,6 @@ func Load() Config {
 		Server:   NewServer(),
 		Database: NewDatabase(),
 		Redis:    NewRedis(),
+		Auth:     NewAuth(),
 	}
 }
