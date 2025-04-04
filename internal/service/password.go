@@ -26,5 +26,5 @@ func (p *passwordServiceImpl) HashPassword(password string) (string, error) {
 }
 
 func (p *passwordServiceImpl) VerifyPassword(password string, hash string) bool {
-	panic("not implemented") // TODO: Implement
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
