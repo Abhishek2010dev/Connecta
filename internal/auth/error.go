@@ -11,5 +11,4 @@ const (
 	ErrInvalidTokenFormat    TokenValidationError = "Invalid token format"
 	ErrInvalidTokenSignature TokenValidationError = "Invalid token signature"
 	ErrTokenValidationFailed TokenValidationError = "Token validation failed"
-	RedisTokenNull           TokenValidationError = "Redis Token is null"
 )
