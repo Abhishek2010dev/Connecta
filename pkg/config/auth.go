@@ -1,11 +1,11 @@
 package config
 
 type Auth struct {
-	JwtSecret string
+	SessionSecret string
 }
 
 func NewAuth() Auth {
 	return Auth{
-		JwtSecret: LoadEnv("AUTH_JWT_SECRET"),
+		SessionSecret: LoadEnv("AUTH_SESSION_SECRET"),
 	}
 }
