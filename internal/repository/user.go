@@ -53,7 +53,10 @@ func (u *userRepositoryImpl) ExitsByEmail(email string) (bool, error) {
 }
 
 func (u *userRepositoryImpl) FindByEmail(email string) (*models.User, error) {
-	query := "SELECT * FROM users WHERE email = $1"
+	query := `
+        	SELECT id, name, username, email, password, created_at FROM users 
+        	WHERE email = $1
+	`
 
 	var user models.User
 	row := u.db.QueryRow(query, email)
