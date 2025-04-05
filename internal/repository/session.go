@@ -12,7 +12,7 @@ import (
 // NOTE: I am returning sessionId in same function for just check
 type SessionRepository interface {
 	Create(tokenHash string, userID int64, expiresAt time.Time) (string, error)
-	FindByIDWithUsername(sessionID string) (*models.Session, string, error)
+	FindByIDWithUsername(sessionID string) (*models.Session, int64, error)
 	DeleteByID(sessionID string) (string, error)
 	UpdateExpiration(sessionID string, newExpiration time.Time) (string, error)
 }
@@ -37,8 +37,25 @@ func (s *sessionRepoImpl) Create(tokenHash string, userID int64, expiresAt time.
 	return sessionId, nil
 }
 
-func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Session, string, error) {
-	panic("not implemented") // TODO: Implement
+func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Session, int64, error) {
+	query := `
+		SELECT s.id, s.user_id, s.expires_at, u.username
+	 	FROM session s
+		JOIN users u ON s.user_id = u.id
+		WHERE s.id = $1
+	`
+
+	var session models.Session
+	var userId int64
+	err := s.db.QueryRow(query, sessionID).Scan(&session.Id, &session.UserId, &session.ExpiresAt, &userId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, 0, nil
+		}
+		return nil, 0, fmt.Errorf("Failed to update session with id %s: %w", sessionID, err)
+	}
+
+	return &session, userId, nil
 }
 
 func (s *sessionRepoImpl) DeleteByID(sessionID string) (string, error) {
