@@ -9,21 +9,21 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/models"
 )
 
-type UserRepository interface {
+type User interface {
 	Create(payload dto.CreateUserPayload) (int64, error)
 	ExitsByEmail(email string) (bool, error)
 	FindByEmail(email string) (*models.User, error)
 }
 
-type userRepositoryImpl struct {
+type userRepoImpl struct {
 	db *sql.DB
 }
 
-func NewUser(db *sql.DB) UserRepository {
-	return &userRepositoryImpl{db}
+func NewUser(db *sql.DB) User {
+	return &userRepoImpl{db}
 }
 
-func (u *userRepositoryImpl) Create(payload dto.CreateUserPayload) (int64, error) {
+func (u *userRepoImpl) Create(payload dto.CreateUserPayload) (int64, error) {
 	query := `
 		INSERT INTO users(name, username, email, password) VALUES ($1, $2, $3, $4) 
 		RETURNING id;
@@ -40,7 +40,7 @@ func (u *userRepositoryImpl) Create(payload dto.CreateUserPayload) (int64, error
 	return userId, nil
 }
 
-func (u *userRepositoryImpl) ExitsByEmail(email string) (bool, error) {
+func (u *userRepoImpl) ExitsByEmail(email string) (bool, error) {
 	query := "SELECT 1 FROM users WHERE email = $1"
 	var exits int
 	if err := u.db.QueryRow(query, email).Scan(&exits); err != nil {
@@ -52,7 +52,7 @@ func (u *userRepositoryImpl) ExitsByEmail(email string) (bool, error) {
 	return true, nil
 }
 
-func (u *userRepositoryImpl) FindByEmail(email string) (*models.User, error) {
+func (u *userRepoImpl) FindByEmail(email string) (*models.User, error) {
 	query := `
         	SELECT id, name, username, email, password, created_at FROM users 
         	WHERE email = $1
