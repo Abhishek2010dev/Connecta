@@ -10,7 +10,7 @@ import (
 )
 
 // NOTE: I am returning sessionId in same function for just check
-type SessionRepository interface {
+type Session interface {
 	Create(tokenHash string, userID int64, expiresAt time.Time) (string, error)
 	FindByIDWithUsername(sessionID string) (*models.Session, int64, error)
 	DeleteByID(sessionID string) (string, error)
@@ -21,7 +21,7 @@ type sessionRepoImpl struct {
 	db *sql.DB
 }
 
-func NewSessionRepository(db *sql.DB) SessionRepository {
+func NewSessionRepository(db *sql.DB) Session {
 	return &sessionRepoImpl{db}
 }
 
