@@ -2,6 +2,8 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Abhishek2010dev/Connecta/internal/models"
@@ -24,7 +26,15 @@ func NewSessionRepository(db *sql.DB) SessionRepository {
 }
 
 func (s *sessionRepoImpl) Create(tokenHash string, userID int64, expiresAt time.Time) (string, error) {
-	panic("")
+	query := "INSERT INTO session(id, user_id, expires_at) VALUES($1, $2, $3) RETURING id"
+	var sessionId string
+	if err := s.db.QueryRow(query, tokenHash, userID, expiresAt).Scan(&sessionId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", fmt.Errorf("Failed to create session: %w", err)
+		}
+		return "", fmt.Errorf("Failed to scan sessionId: %w", err)
+	}
+	return sessionId, nil
 }
 
 func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Session, string, error) {
