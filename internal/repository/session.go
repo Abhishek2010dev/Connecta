@@ -12,7 +12,7 @@ import (
 // NOTE: I am returning sessionId in same function for just check
 type Session interface {
 	Create(tokenHash string, userID int64, expiresAt time.Time) (string, error)
-	FindByIDWithUsername(sessionID string) (*models.Session, int64, error)
+	FindByIDWithUsername(sessionID string) (*models.Session, string, error)
 	DeleteByID(sessionID string) (string, error)
 	UpdateExpiration(sessionID string, newExpiration time.Time) (string, error)
 }
@@ -37,7 +37,7 @@ func (s *sessionRepoImpl) Create(tokenHash string, userID int64, expiresAt time.
 	return sessionId, nil
 }
 
-func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Session, int64, error) {
+func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Session, string, error) {
 	query := `
 		SELECT s.id, s.user_id, s.expires_at, u.username
 	 	FROM session s
@@ -46,16 +46,16 @@ func (s *sessionRepoImpl) FindByIDWithUsername(sessionID string) (*models.Sessio
 	`
 
 	var session models.Session
-	var userId int64
-	err := s.db.QueryRow(query, sessionID).Scan(&session.Id, &session.UserId, &session.ExpiresAt, &userId)
+	var username string
+	err := s.db.QueryRow(query, sessionID).Scan(&session.Id, &session.UserId, &session.ExpiresAt, &username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, 0, nil
+			return nil, "", nil
 		}
-		return nil, 0, fmt.Errorf("Failed to update session with id %s: %w", sessionID, err)
+		return nil, "", fmt.Errorf("Failed to update session with id %s: %w", sessionID, err)
 	}
 
-	return &session, userId, nil
+	return &session, username, nil
 }
 
 func (s *sessionRepoImpl) DeleteByID(sessionID string) (string, error) {

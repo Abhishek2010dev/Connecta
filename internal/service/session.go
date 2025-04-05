@@ -5,9 +5,11 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"log"
 	"time"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
+	"github.com/Abhishek2010dev/Connecta/internal/models"
 	"github.com/Abhishek2010dev/Connecta/internal/repository"
 )
 
@@ -19,7 +21,7 @@ const (
 
 type Session interface {
 	GenerateToken(userID int64) (string, error)
-	ValidateToken(token string) (*dto.AuthPaylaod, error)
+	ValidateToken(token string) (*models.Session, *dto.AuthPaylaod, error)
 }
 
 type sessionServiceImpl struct {
@@ -42,8 +44,33 @@ func (s *sessionServiceImpl) GenerateToken(userID int64) (string, error) {
 	return token, nil
 }
 
-func (s *sessionServiceImpl) ValidateToken(token string) (*dto.AuthPaylaod, error) {
-	panic("not implemented") // TODO: Implement
+func (s *sessionServiceImpl) ValidateToken(token string) (*models.Session, *dto.AuthPaylaod, error) {
+	sessionID := hashToken(token)
+	session, username, err := s.repo.FindByIDWithUsername(sessionID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if time.Now().After(session.ExpiresAt) {
+		log.Println("Session expired. Deleting...")
+		if _, err := s.repo.DeleteByID(sessionID); err != nil {
+			return nil, nil, err
+		}
+		return nil, nil, nil
+	}
+
+	if time.Now().After(session.ExpiresAt.Add(-RenewBefore)) {
+		newExpiresAt := time.Now().Add(SessionDuration)
+		session.ExpiresAt = newExpiresAt
+		if _, err := s.repo.UpdateExpiration(sessionID, newExpiresAt); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	return session, &dto.AuthPaylaod{
+		UserId:   session.UserId,
+		Username: username,
+	}, nil
 }
 
 func hashToken(token string) string {
