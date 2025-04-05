@@ -54,5 +54,13 @@ func (s *sessionRepoImpl) DeleteByID(sessionID string) (string, error) {
 }
 
 func (s *sessionRepoImpl) UpdateExpiration(sessionID string, newExpiration time.Time) (string, error) {
-	panic("not implemented") // TODO: Implement
+	query := "UPDATE  session SET expires_at = $1 WHERE id = $2 RETURNING id"
+	var returnedID string
+	if err := s.db.QueryRow(query, newExpiration, sessionID).Scan(&returnedID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", fmt.Errorf("Failed to update session with id %s: %w", sessionID, err)
+	}
+	return returnedID, nil
 }
