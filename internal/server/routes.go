@@ -11,5 +11,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 		middleware.Logging,
 	)
 	router := http.NewServeMux()
+	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	return stack(router)
 }
