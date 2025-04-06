@@ -1,0 +1,27 @@
+{
+  "name": "connecta",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Abhishek2010dev/Connecta#readme",
+  "bugs": {
+    "url": "https://github.com/Abhishek2010dev/Connecta/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abhishek2010dev/Connecta.git"
+  },
+  "license": "ISC",
+  "author": "Abhishek2010dev",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx @tailwindcss/cli -i style/input.css -o static/css/tailwind.css"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.3",
+    "daisyui": "^5.0.12",
+    "tailwindcss": "^4.1.3"
+  }
+}
+

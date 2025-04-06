@@ -24,4 +24,9 @@ go.work.sum
 # env file
 .env
 
+# build file
 tmp/
+node_modules/
+package-lock.json
+
+static/css/tailwind.css
