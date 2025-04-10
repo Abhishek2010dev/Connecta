@@ -26,5 +26,5 @@ func (c *redisClient) Get() *redis.Client {
 }
 
 func (c *redisClient) Close() error {
-	return c.Close()
+	return c.client.Close()
 }
