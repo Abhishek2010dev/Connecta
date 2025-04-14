@@ -18,8 +18,11 @@ type templateRenderer struct {
 	dirName string
 }
 
-func New() Renderer {
-	return &templateRenderer{}
+func New(dirName string) Renderer {
+	return &templateRenderer{
+		cache:   make(map[string]*template.Template),
+		dirName: dirName,
+	}
 }
 
 func (t *templateRenderer) Render(w http.ResponseWriter, data any, templates ...string) {
@@ -52,5 +55,4 @@ func (t *templateRenderer) Render(w http.ResponseWriter, data any, templates ...
 		log.Printf("template execution error: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-
 }
