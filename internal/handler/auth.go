@@ -16,4 +16,10 @@ type Auth struct {
 }
 
 func NewAuth(renderer renderer.Renderer, db *sql.DB) *Auth {
+	return &Auth{
+		renderer:        renderer,
+		passwordService: service.NewPasswordService(),
+		sessionService:  service.NewSession(db),
+		userRepository:  repository.NewUser(db),
+	}
 }
