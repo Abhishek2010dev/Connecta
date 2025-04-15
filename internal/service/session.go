@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/rand"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
 	"log"
@@ -28,8 +29,10 @@ type sessionServiceImpl struct {
 	repo repository.Session
 }
 
-func NewSession(repo repository.Session) Session {
-	return &sessionServiceImpl{repo}
+func NewSession(db *sql.DB) Session {
+	return &sessionServiceImpl{
+		repo: repository.NewSessionRepository(db),
+	}
 }
 
 func (s *sessionServiceImpl) GenerateToken(userID int64) (string, error) {
