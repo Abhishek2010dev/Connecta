@@ -15,5 +15,5 @@ func NewHomeHandler(renderer renderer.Renderer) *HomeHandler {
 }
 
 func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.renderer.Render(w, nil, "layout.html", "home.html")
+	h.renderer.Render(w, nil, "layout.html", "pages/home.html")
 }

@@ -6,14 +6,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type PasswordService interface {
+type Password interface {
 	HashPassword(password string) (string, error)
 	VerifyPassword(password string, hash string) bool
 }
 
 type passwordServiceImpl struct{}
 
-func NewPasswordService() PasswordService {
+func NewPasswordService() Password {
 	return &passwordServiceImpl{}
 }
 
