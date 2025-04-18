@@ -7,6 +7,7 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/Abhishek2010dev/Connecta/internal/repository"
 	"github.com/Abhishek2010dev/Connecta/internal/service"
+	"github.com/go-chi/chi/v5"
 )
 
 type Auth struct {
@@ -31,8 +32,6 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	}, "pages/auth/layout.html", "pages/auth/register.html")
 }
 
-func (a *Auth) RegisterRoutes() http.Handler {
-	router := http.NewServeMux()
-	router.HandleFunc("GET /register", a.RegisterPage)
-	return router
+func (a *Auth) RegisterRoutes(r chi.Router) {
+	r.Get("/register", a.RegisterPage)
 }
