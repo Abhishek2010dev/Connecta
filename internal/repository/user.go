@@ -11,7 +11,8 @@ import (
 
 type User interface {
 	Create(payload *dto.CreateUserPayload) (int64, error)
-	ExistsByEmailAndUsername(email string, username string) (bool, error)
+	ExistsByEmail(email string) (bool, error)
+	ExistsByUsername(username string) (bool, error)
 	FindByEmail(email string) (*models.User, error)
 }
 
@@ -40,14 +41,26 @@ func (u *userRepoImpl) Create(payload *dto.CreateUserPayload) (int64, error) {
 	return userId, nil
 }
 
-func (u *userRepoImpl) ExistsByEmailAndUsername(email string, username string) (bool, error) {
-	query := "SELECT 1 FROM users WHERE email = $1 AND username = $2"
-	var exits int
-	if err := u.db.QueryRow(query, email, username).Scan(&exits); err != nil {
+func (u *userRepoImpl) ExistsByEmail(email string) (bool, error) {
+	query := "SELECT 1 FROM users WHERE email = $1"
+	var exists int
+	if err := u.db.QueryRow(query, email).Scan(&exists); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return false, nil
 		}
 		return false, fmt.Errorf("Failed to check email existence: %w", err)
+	}
+	return true, nil
+}
+
+func (u *userRepoImpl) ExistsByUsername(username string) (bool, error) {
+	query := "SELECT 1 FROM users WHERE username = $1"
+	var exists int
+	if err := u.db.QueryRow(query, username).Scan(&exists); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, fmt.Errorf("Failed to check username existence: %w", err)
 	}
 	return true, nil
 }
@@ -63,9 +76,10 @@ func (u *userRepoImpl) FindByEmail(email string) (*models.User, error) {
 	err := row.Scan(&user.Id, &user.Name, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("User does not exits: %w", err)
+			return nil, fmt.Errorf("User does not exist: %w", err)
 		}
 		return nil, fmt.Errorf("Failed to find user by email %s: %w", email, err)
 	}
 	return &user, nil
 }
+
