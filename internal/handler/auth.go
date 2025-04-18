@@ -81,7 +81,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exits, err := a.userRepository.ExistsByEmailAndUsername(payload.Email, payload.Username)
+	exists, err := a.userRepository.ExistsByEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
 		log.Println(err)
 		redirectToErrorPage(w, ErrorResponse{
@@ -91,7 +91,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if exits {
+	if exists {
 		data := map[string]any{
 			"Form": payload,
 			"Errors": map[string]string{
