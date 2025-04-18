@@ -11,7 +11,7 @@ import (
 
 type User interface {
 	Create(payload dto.CreateUserPayload) (int64, error)
-	ExitsByEmail(email string) (bool, error)
+	ExitsByEmailAndUsername(email string, username string) (bool, error)
 	FindByEmail(email string) (*models.User, error)
 }
 
