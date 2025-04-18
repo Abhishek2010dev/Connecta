@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-type ErrorResposne struct {
+type ErrorResponse struct {
 	Title   string
 	Message string
 }
 
-func redirectToErrorPage(w http.ResponseWriter, error ErrorResposne) {
+func redirectToErrorPage(w http.ResponseWriter, error ErrorResponse) {
 	params := url.Values{}
 	params.Add("title", error.Title)
 	params.Add("message", error.Message)

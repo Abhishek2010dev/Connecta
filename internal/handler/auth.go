@@ -55,22 +55,20 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Printf("Failed to process request: %s", err)
-		error := ErrorResposne{
+		redirectToErrorPage(w, ErrorResponse{
 			Title:   "Something went wrong",
 			Message: "We couldn't process your request. Please try again.",
-		}
-		redirectToErrorPage(w, error)
+		})
 		return
 	}
 
 	var payload dto.CreateUserPayload
 	if err := a.decoder.Decode(&payload, r.PostForm); err != nil {
 		log.Printf("Invalid submission: %s", err)
-		error := ErrorResposne{
+		redirectToErrorPage(w, ErrorResponse{
 			Title:   "Invalid submission",
 			Message: "There was an issue with the information you entered. Please review and try again.",
-		}
-		redirectToErrorPage(w, error)
+		})
 		return
 	}
 
@@ -86,11 +84,10 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	exits, err := a.userRepository.ExistsByEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
 		log.Println(err)
-		error := ErrorResposne{
+		redirectToErrorPage(w, ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while checking your account details. Please try again later.",
-		}
-		redirectToErrorPage(w, error)
+		})
 		return
 	}
 
@@ -109,7 +106,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	payload.Password, err = a.passwordService.HashPassword(payload.Password)
 	if err != nil {
 		log.Println(err)
-		redirectToErrorPage(w, ErrorResposne{
+		redirectToErrorPage(w, ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while hashing password. Please try again later.",
 		})
@@ -119,18 +116,17 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := a.userRepository.Create(payload)
 	if err != nil {
 		log.Println(err)
-		error := ErrorResposne{
+		redirectToErrorPage(w, ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while create your account. Please try again later.",
-		}
-		redirectToErrorPage(w, error)
+		})
 		return
 	}
 
 	token, err := a.sessionService.GenerateToken(userID)
 	if err != nil {
 		log.Println(err)
-		error := ErrorResposne{
+		error := ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while generating session token. Please try again later.",
 		}
