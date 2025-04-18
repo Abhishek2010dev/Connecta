@@ -13,9 +13,7 @@ type CreateUserPayload struct {
 	Email    string `schema:"email" validate:"required,email"`
 }
 
-var validate = validator.New()
-
-func (u *CreateUserPayload) Validate() map[string]string {
+func (u *CreateUserPayload) Validate(validate *validator.Validate) map[string]string {
 	err := validate.Struct(u)
 	if err == nil {
 		return nil

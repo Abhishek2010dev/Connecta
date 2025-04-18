@@ -55,7 +55,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if validationError := payload.Validate(); validationError != nil {
+	if validationError := payload.Validate(a.validate); validationError != nil {
 		data := map[string]any{
 			"Title":  "Register",
 			"Form":   payload,
