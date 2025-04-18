@@ -89,6 +89,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			Message: "Something went wrong while checking your account details. Please try again later.",
 		}
 		redirectToErrorPage(w, error)
+		return
 	}
 
 	if exits {
