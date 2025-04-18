@@ -63,3 +63,39 @@ func (u *CreateUserPayload) Validate(validate *validator.Validate) map[string]st
 
 	return errors
 }
+
+type LoginUserPayload struct {
+	Password string `schema:"password" validate:"required,min=8"`
+	Email    string `schema:"email" validate:"required,email"`
+}
+
+func (u *LoginUserPayload) Validate(validate *validator.Validate) map[string]string {
+	err := validate.Struct(u)
+	if err == nil {
+		return nil
+	}
+
+	errors := make(map[string]string)
+	for _, e := range err.(validator.ValidationErrors) {
+		switch e.Field() {
+		case "Password":
+			switch e.Tag() {
+			case "required":
+				errors["password"] = "Password is required."
+			case "min":
+				errors["password"] = "Password must be at least 8 characters."
+			}
+		case "Email":
+			switch e.Tag() {
+			case "required":
+				errors["email"] = "Email is required."
+			case "email":
+				errors["email"] = "Email must be a valid email address."
+			}
+		default:
+			errors[e.Field()] = fmt.Sprintf("Invalid value for %s", e.Field())
+		}
+	}
+
+	return errors
+}
