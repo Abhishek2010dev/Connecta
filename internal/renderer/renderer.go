@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
 type Renderer interface {
 	Render(w http.ResponseWriter, data any, templates ...string)
+	RenderTemplate(w http.ResponseWriter, name string, data any, templates ...string)
 }
 
 type templateRenderer struct {
@@ -25,31 +27,41 @@ func New(dirName string) Renderer {
 	}
 }
 
-func (t *templateRenderer) Render(w http.ResponseWriter, data any, templates ...string) {
-	key := filepath.Join(templates...)
+// loadTemplate caches and returns a parsed template
+func (t *templateRenderer) loadTemplate(templates ...string) (*template.Template, error) {
+	key := strings.Join(templates, "|")
 
 	t.mu.RLock()
 	tmpl, found := t.cache[key]
 	t.mu.RUnlock()
 
-	if !found {
-		paths := make([]string, len(templates))
-		for i, templatePath := range templates {
-			paths[i] = filepath.Join(t.dirName, templatePath)
-		}
+	if found {
+		return tmpl, nil
+	}
 
-		parsedTmpl, err := template.ParseFiles(paths...)
-		if err != nil {
-			log.Printf("template parsing error: %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
+	paths := make([]string, len(templates))
+	for i, file := range templates {
+		paths[i] = filepath.Join(t.dirName, file)
+	}
 
-		t.mu.Lock()
-		t.cache[key] = parsedTmpl
-		t.mu.Unlock()
+	parsedTmpl, err := template.ParseFiles(paths...)
+	if err != nil {
+		return nil, err
+	}
 
-		tmpl = parsedTmpl
+	t.mu.Lock()
+	t.cache[key] = parsedTmpl
+	t.mu.Unlock()
+
+	return parsedTmpl, nil
+}
+
+func (t *templateRenderer) Render(w http.ResponseWriter, data any, templates ...string) {
+	tmpl, err := t.loadTemplate(templates...)
+	if err != nil {
+		log.Printf("template load error: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -57,3 +69,18 @@ func (t *templateRenderer) Render(w http.ResponseWriter, data any, templates ...
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
+
+func (t *templateRenderer) RenderTemplate(w http.ResponseWriter, name string, data any, templates ...string) {
+	tmpl, err := t.loadTemplate(templates...)
+	if err != nil {
+		log.Printf("template load error: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.ExecuteTemplate(w, name, data); err != nil {
+		log.Printf("template execution error: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+

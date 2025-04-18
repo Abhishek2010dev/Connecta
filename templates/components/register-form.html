@@ -1,0 +1,71 @@
+{{ define "register-form" }}
+<form class="space-y-6" hx-post="/auth/register" hx-target="this" hx-swap="outerHTML" novalidate>
+	<div>
+		<label for="name" class="block text-sm font-medium text-white">Full Name</label>
+		<input type="text" name="name" id="name" required autocomplete="name" value="{{.Form.Name}}"
+			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 ring-gray-600 focus:ring-2 focus:ring-indigo-500 transition" />
+		{{if .Errors.name}}
+		<p class="mt-1 flex items-center text-sm text-red-500">
+			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			{{.Errors.name}}
+		</p>
+		{{end}}
+	</div>
+
+	<div>
+		<label for="username" class="block text-sm font-medium text-white">Username</label>
+		<input type="text" name="username" id="username" required autocomplete="username"
+			value="{{.Form.Username}}"
+			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 ring-gray-600 focus:ring-2 focus:ring-indigo-500 transition" />
+		{{if .Errors.username}}
+		<p class="mt-1 flex items-center text-sm text-red-500">
+			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			{{.Errors.username}}
+		</p>
+		{{end}}
+	</div>
+
+	<div>
+		<label for="email" class="block text-sm font-medium text-white">Email Address</label>
+		<input type="email" name="email" id="email" required autocomplete="email" value="{{.Form.Email}}"
+			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 ring-gray-600 focus:ring-2 focus:ring-indigo-500 transition" />
+		{{if .Errors.email}}
+		<p class="mt-1 flex items-center text-sm text-red-500">
+			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			{{.Errors.email}}
+		</p>
+		{{end}}
+	</div>
+
+	<div>
+		<label for="password" class="block text-sm font-medium text-white">Password</label>
+		<input type="password" name="password" id="password" required autocomplete="new-password"
+			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 ring-gray-600 focus:ring-2 focus:ring-indigo-500 transition" />
+		{{if .Errors.password}}
+		<p class="mt-1 flex items-center text-sm text-red-500">
+			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			{{.Errors.password}}
+		</p>
+		{{end}}
+	</div>
+
+	<div>
+		<button type="submit"
+			class="flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition">
+			Register
+		</button>
+	</div>
+</form>
+{{end}}
