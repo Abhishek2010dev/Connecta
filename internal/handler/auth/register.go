@@ -1,42 +1,14 @@
-package handler
+package auth
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
-	"github.com/Abhishek2010dev/Connecta/internal/renderer"
-	"github.com/Abhishek2010dev/Connecta/internal/repository"
-	"github.com/Abhishek2010dev/Connecta/internal/service"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/schema"
+	"github.com/Abhishek2010dev/Connecta/internal/handler"
 )
 
-type Auth struct {
-	renderer        renderer.Renderer
-	passwordService service.Password
-	sessionService  service.Session
-	userRepository  repository.User
-	decoder         *schema.Decoder
-	validate        *validator.Validate
-	tokenName       string
-}
-
-func NewAuth(renderer renderer.Renderer, db *sql.DB) *Auth {
-	return &Auth{
-		renderer:        renderer,
-		passwordService: service.NewPasswordService(),
-		sessionService:  service.NewSession(db),
-		userRepository:  repository.NewUser(db),
-		decoder:         schema.NewDecoder(),
-		validate:        validator.New(),
-		tokenName:       "authToken",
-	}
-}
-
-func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
+func (a *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"Title":  "Register",
 		"Form":   dto.CreateUserPayload{},
@@ -51,8 +23,8 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	payload := parseAndDecodeForm[dto.CreateUserPayload](w, r, a.decoder)
+func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	payload := handler.ParseAndDecodeForm[dto.CreateUserPayload](w, r, a.decoder)
 	if payload == nil {
 		return
 	}
@@ -69,7 +41,8 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	emailExists, usernameExists, err := a.userRepository.CheckEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
 		log.Println(err)
-		redirectToErrorPage(w, ErrorResponse{
+
+		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while checking your account details. Please try again later.",
 		})
@@ -97,7 +70,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	payload.Password, err = a.passwordService.HashPassword(payload.Password)
 	if err != nil {
 		log.Println(err)
-		redirectToErrorPage(w, ErrorResponse{
+		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while hashing password. Please try again later.",
 		})
@@ -107,7 +80,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := a.userRepository.Create(payload)
 	if err != nil {
 		log.Println(err)
-		redirectToErrorPage(w, ErrorResponse{
+		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while create your account. Please try again later.",
 		})
@@ -117,20 +90,14 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := a.sessionService.GenerateToken(userID)
 	if err != nil {
 		log.Println(err)
-		error := ErrorResponse{
+		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
 			Message: "Something went wrong while generating session token. Please try again later.",
-		}
-		redirectToErrorPage(w, error)
+		})
 		return
 	}
 
 	setCookie(w, a.tokenName, token)
 	w.Header().Set("HX-Redirect", "/")
 
-}
-
-func (a *Auth) RegisterRoutes(r chi.Router) {
-	r.Get("/register", a.RegisterPage)
-	r.Post("/register", a.RegisterHandler)
 }

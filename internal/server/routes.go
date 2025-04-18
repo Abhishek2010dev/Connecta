@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
+	"github.com/Abhishek2010dev/Connecta/internal/handler/auth"
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -38,7 +39,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		w.Write([]byte("Hello, World"))
 	})
 
-	authHandler := handler.NewAuth(renderer, s.db)
+	authHandler := auth.NewAuthHandler(renderer, s.db)
 	router.Route("/auth", authHandler.RegisterRoutes)
 
 	return router
