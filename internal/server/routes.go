@@ -22,6 +22,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 		renderer.Render(w, nil, "layout.html", "error/404.html")
 	})
 
+	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+		query := r.URL.Query()
+		error := handler.ErrorResposne{
+			Title:   query.Get("title"),
+			Message: query.Get("message"),
+		}
+		renderer.Render(w, error, "layout.html", "error/other.html")
+	})
+
 	fs := http.FileServer(http.Dir("static"))
 	router.Handle("/static/*", http.StripPrefix("/static", fs))
 
@@ -33,7 +42,4 @@ func (s *Server) RegisterRoutes() http.Handler {
 	router.Route("/auth", authHandler.RegisterRoutes)
 
 	return router
-}
-
-func NotFound(renderer renderer.Renderer, w http.ResponseWriter, r *http.Request) {
 }

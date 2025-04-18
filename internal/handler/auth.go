@@ -51,13 +51,21 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		a.renderer.RenderError(w, "Something went wrong", "We couldn't process your request. Please try again.")
+		error := ErrorResposne{
+			Title:   "Something went wrong",
+			Message: "We couldn't process your request. Please try again.",
+		}
+		redirectToErrorPage(w, error)
 		return
 	}
 
 	var payload dto.CreateUserPayload
 	if err := a.decoder.Decode(&payload, r.PostForm); err != nil {
-		a.renderer.RenderError(w, "Invalid submission", "There was an issue with the information you entered. Please review and try again.")
+		error := ErrorResposne{
+			Title:   "Invalid submission",
+			Message: "There was an issue with the information you entered. Please review and try again.",
+		}
+		redirectToErrorPage(w, error)
 		return
 	}
 
@@ -70,6 +78,9 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	exits, err := a.userRepository.ExitsByEmailAndUsername(payload.Email, payload.Username)
+	if err != nil {
+	}
 }
 
 func (a *Auth) RegisterRoutes(r chi.Router) {

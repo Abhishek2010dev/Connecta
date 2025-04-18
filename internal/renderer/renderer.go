@@ -12,7 +12,6 @@ import (
 type Renderer interface {
 	Render(w http.ResponseWriter, data any, templates ...string)
 	RenderTemplate(w http.ResponseWriter, name string, data any, templates ...string)
-	RenderError(w http.ResponseWriter, title string, msg string)
 }
 
 type templateRenderer struct {
@@ -83,12 +82,4 @@ func (t *templateRenderer) RenderTemplate(w http.ResponseWriter, name string, da
 		log.Printf("template execution error: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-}
-
-func (t *templateRenderer) RenderError(w http.ResponseWriter, title string, msg string) {
-	data := map[string]string{
-		"Title":   title,
-		"Message": msg,
-	}
-	t.Render(w, data, "layout.html", "error/other.html")
 }
