@@ -39,7 +39,13 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 		"Form":   dto.CreateUserPayload{},
 		"Errors": map[string]string{},
 	}
-	a.renderer.Render(w, data, "pages/auth/layout.html", "pages/auth/register.html", "components/register-form.html")
+	a.renderer.Render(
+		w,
+		data,
+		"pages/auth/layout.html",
+		"pages/auth/register.html",
+		"components/register-form.html",
+	)
 }
 
 func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
