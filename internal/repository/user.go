@@ -11,7 +11,7 @@ import (
 
 type User interface {
 	Create(payload dto.CreateUserPayload) (int64, error)
-	ExitsByEmailAndUsername(email string, username string) (bool, error)
+	ExistsByEmailAndUsername(email string, username string) (bool, error)
 	FindByEmail(email string) (*models.User, error)
 }
 
@@ -40,8 +40,8 @@ func (u *userRepoImpl) Create(payload dto.CreateUserPayload) (int64, error) {
 	return userId, nil
 }
 
-func (u *userRepoImpl) ExitsByEmailAndUsername(email string, username string) (bool, error) {
-	query := "SELECT 1 FROM users WHERE email = $1 AND $2"
+func (u *userRepoImpl) ExistsByEmailAndUsername(email string, username string) (bool, error) {
+	query := "SELECT 1 FROM users WHERE email = $1 AND username = $2"
 	var exits int
 	if err := u.db.QueryRow(query, email, username).Scan(&exits); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

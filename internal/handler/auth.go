@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
@@ -51,6 +52,7 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
+		log.Printf("Failed to process request: %s", err)
 		error := ErrorResposne{
 			Title:   "Something went wrong",
 			Message: "We couldn't process your request. Please try again.",
@@ -61,6 +63,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	var payload dto.CreateUserPayload
 	if err := a.decoder.Decode(&payload, r.PostForm); err != nil {
+		log.Printf("Invalid submission: %s", err)
 		error := ErrorResposne{
 			Title:   "Invalid submission",
 			Message: "There was an issue with the information you entered. Please review and try again.",
@@ -78,9 +81,28 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exits, err := a.userRepository.ExitsByEmailAndUsername(payload.Email, payload.Username)
+	exits, err := a.userRepository.ExistsByEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
+		log.Println(err)
+		error := ErrorResposne{
+			Title:   "Server Error",
+			Message: "Something went wrong while checking your account details. Please try again later.",
+		}
+		redirectToErrorPage(w, error)
 	}
+
+	if exits {
+		data := map[string]any{
+			"Form": payload,
+			"Errors": map[string]string{
+				"email":    "This email is already registered.",
+				"username": "This username is already taken.",
+			},
+		}
+		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
+		return
+	}
+
 }
 
 func (a *Auth) RegisterRoutes(r chi.Router) {
