@@ -66,7 +66,7 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exists, err := a.userRepository.ExistsByEmail(payload.Email)
+	emailExists, usernameExists, err := a.userRepository.CheckEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
 		log.Println(err)
 		redirectToErrorPage(w, ErrorResponse{
@@ -76,33 +76,19 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if exists {
-		data := map[string]any{
-			"Form": payload,
-			"Errors": map[string]string{
-				"email": "This email is already registered.",
-			},
+	if usernameExists || emailExists {
+		errors := map[string]string{}
+		if usernameExists {
+			errors["username"] = "This username is already taken"
 		}
-		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
-		return
-	}
 
-	exists, err := a.userRepository.ExistsByEmail(payload.Email)
-	if err != nil {
-		log.Println(err)
-		redirectToErrorPage(w, ErrorResponse{
-			Title:   "Server Error",
-			Message: "Something went wrong while checking your account details. Please try again later.",
-		})
-		return
-	}
+		if emailExists {
+			errors["email"] = "This email is already registered"
+		}
 
-	if exists {
 		data := map[string]any{
-			"Form": payload,
-			"Errors": map[string]string{
-				"email": "This email is already registered.",
-			},
+			"Form":   payload,
+			"Errors": errors,
 		}
 		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return
