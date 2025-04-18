@@ -21,6 +21,7 @@ type Auth struct {
 	userRepository  repository.User
 	decoder         *schema.Decoder
 	validate        *validator.Validate
+	tokenName       string
 }
 
 func NewAuth(renderer renderer.Renderer, db *sql.DB) *Auth {
@@ -31,6 +32,7 @@ func NewAuth(renderer renderer.Renderer, db *sql.DB) *Auth {
 		userRepository:  repository.NewUser(db),
 		decoder:         schema.NewDecoder(),
 		validate:        validator.New(),
+		tokenName:       "authToken",
 	}
 }
 
@@ -103,6 +105,41 @@ func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return
 	}
+
+	payload.Password, err = a.passwordService.HashPassword(payload.Password)
+	if err != nil {
+		log.Println(err)
+		redirectToErrorPage(w, ErrorResposne{
+			Title:   "Server Error",
+			Message: "Something went wrong while hashing password. Please try again later.",
+		})
+		return
+	}
+
+	userID, err := a.userRepository.Create(payload)
+	if err != nil {
+		log.Println(err)
+		error := ErrorResposne{
+			Title:   "Server Error",
+			Message: "Something went wrong while create your account. Please try again later.",
+		}
+		redirectToErrorPage(w, error)
+		return
+	}
+
+	token, err := a.sessionService.GenerateToken(userID)
+	if err != nil {
+		log.Println(err)
+		error := ErrorResposne{
+			Title:   "Server Error",
+			Message: "Something went wrong while generating session token. Please try again later.",
+		}
+		redirectToErrorPage(w, error)
+		return
+	}
+
+	setCookie(w, a.tokenName, token)
+	w.Header().Set("HX-Redirect", "/")
 
 }
 
