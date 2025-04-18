@@ -36,4 +36,6 @@ func NewAuthHandler(renderer renderer.Renderer, db *sql.DB) *AuthHandler {
 func (a *AuthHandler) RegisterRoutes(r chi.Router) {
 	r.Get("/register", a.RegisterPage)
 	r.Post("/register", a.RegisterHandler)
+
+	r.Get("/login", a.LoginPage)
 }

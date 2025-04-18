@@ -1,5 +1,5 @@
 {{ define "login-form" }}
-<form class="space-y-6" hx-post="/auth/register" hx-target="this" hx-swap="outerHTML" novalidate>
+<form class="space-y-6" hx-post="/auth/login" hx-target="this" hx-swap="outerHTML" novalidate>
 	<div>
 		<label for="email" class="block text-sm font-medium text-white">Email Address</label>
 		<input type="email" name="email" id="email" required autocomplete="email" value="{{.Form.Email}}"

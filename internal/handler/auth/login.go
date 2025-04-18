@@ -6,7 +6,7 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 )
 
-func (a *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
+func (a *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"Title":  "Register",
 		"Form":   dto.CreateUserPayload{},
@@ -16,7 +16,7 @@ func (a *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 		w,
 		data,
 		"pages/auth/layout.html",
-		"pages/auth/register.html",
-		"components/register-form.html",
+		"pages/auth/login.html",
+		"components/login-form.html",
 	)
 }
