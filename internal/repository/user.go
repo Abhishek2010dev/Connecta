@@ -40,10 +40,10 @@ func (u *userRepoImpl) Create(payload dto.CreateUserPayload) (int64, error) {
 	return userId, nil
 }
 
-func (u *userRepoImpl) ExitsByEmail(email string) (bool, error) {
-	query := "SELECT 1 FROM users WHERE email = $1"
+func (u *userRepoImpl) ExitsByEmailAndUsername(email string, username string) (bool, error) {
+	query := "SELECT 1 FROM users WHERE email = $1 AND $2"
 	var exits int
-	if err := u.db.QueryRow(query, email).Scan(&exits); err != nil {
+	if err := u.db.QueryRow(query, email, username).Scan(&exits); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return false, nil
 		}

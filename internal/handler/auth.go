@@ -49,16 +49,15 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	// a.renderer.RenderError(w, title, msg)
 	err := r.ParseForm()
 	if err != nil {
-		a.renderer.RenderError(w, "Form Parsing Error", "Invalid form data")
+		a.renderer.RenderError(w, "Something went wrong", "We couldn't process your request. Please try again.")
 		return
 	}
 
 	var payload dto.CreateUserPayload
 	if err := a.decoder.Decode(&payload, r.PostForm); err != nil {
-		a.renderer.RenderError(w, "Form Decoding Error", "Error decoding form")
+		a.renderer.RenderError(w, "Invalid submission", "There was an issue with the information you entered. Please review and try again.")
 		return
 	}
 

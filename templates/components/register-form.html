@@ -61,6 +61,18 @@
 		{{end}}
 	</div>
 
+	{{if .OtherError}}
+	<div>
+		<p class="mt-1 flex items-center text-sm text-red-500">
+			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			{{.OtherError}}
+		</p>
+	</div>
+	{{end}}
+
 	<div>
 		<button type="submit"
 			class="flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition">
