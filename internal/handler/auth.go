@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/Abhishek2010dev/Connecta/internal/repository"
@@ -22,4 +23,16 @@ func NewAuth(renderer renderer.Renderer, db *sql.DB) *Auth {
 		sessionService:  service.NewSession(db),
 		userRepository:  repository.NewUser(db),
 	}
+}
+
+func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
+	a.renderer.Render(w, map[string]any{
+		"Title": "Register",
+	}, "pages/auth/layout.html", "pages/auth/register.html")
+}
+
+func (a *Auth) RegisterRoutes() http.Handler {
+	router := http.NewServeMux()
+	router.HandleFunc("GET /register", a.RegisterPage)
+	return router
 }

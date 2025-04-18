@@ -1,11 +1,11 @@
 package renderer
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 	"sync"
-	"text/template"
 )
 
 type Renderer interface {

@@ -3,20 +3,18 @@ package server
 import (
 	"net/http"
 
-	"github.com/Abhishek2010dev/Connecta/internal/handler"
-	"github.com/Abhishek2010dev/Connecta/internal/middleware"
-	"github.com/Abhishek2010dev/Connecta/internal/renderer"
+	"github.com/go-chi/chi/v5"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	stack := middleware.CreateStack(
-		middleware.Logging,
-	)
-	router := http.NewServeMux()
-	renderer := renderer.New("templates")
+	router := chi.NewRouter()
 
-	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	router.Handle("/", handler.NewHomeHandler(renderer))
+	fs := http.FileServer(http.Dir("static"))
+	router.Handle("/static/*", http.StripPrefix("/static", fs))
 
-	return stack(router)
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello, World"))
+	})
+
+	return router
 }
