@@ -10,7 +10,7 @@ import (
 )
 
 type User interface {
-	Create(payload dto.CreateUserPayload) (int64, error)
+	Create(payload *dto.CreateUserPayload) (int64, error)
 	ExistsByEmailAndUsername(email string, username string) (bool, error)
 	FindByEmail(email string) (*models.User, error)
 }
@@ -23,7 +23,7 @@ func NewUser(db *sql.DB) User {
 	return &userRepoImpl{db}
 }
 
-func (u *userRepoImpl) Create(payload dto.CreateUserPayload) (int64, error) {
+func (u *userRepoImpl) Create(payload *dto.CreateUserPayload) (int64, error) {
 	query := `
 		INSERT INTO users(name, username, email, password) VALUES ($1, $2, $3, $4) 
 		RETURNING id;

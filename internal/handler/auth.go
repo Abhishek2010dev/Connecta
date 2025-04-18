@@ -52,23 +52,8 @@ func (a *Auth) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		log.Printf("Failed to process request: %s", err)
-		redirectToErrorPage(w, ErrorResponse{
-			Title:   "Something went wrong",
-			Message: "We couldn't process your request. Please try again.",
-		})
-		return
-	}
-
-	var payload dto.CreateUserPayload
-	if err := a.decoder.Decode(&payload, r.PostForm); err != nil {
-		log.Printf("Invalid submission: %s", err)
-		redirectToErrorPage(w, ErrorResponse{
-			Title:   "Invalid submission",
-			Message: "There was an issue with the information you entered. Please review and try again.",
-		})
+	payload := parseAndDecodeForm[dto.CreateUserPayload](w, r, a.decoder)
+	if payload == nil {
 		return
 	}
 

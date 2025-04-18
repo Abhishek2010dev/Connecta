@@ -24,7 +24,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
-		error := handler.ErrorResposne{
+		error := handler.ErrorResponse{
 			Title:   query.Get("title"),
 			Message: query.Get("message"),
 		}
