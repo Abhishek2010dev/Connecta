@@ -17,6 +17,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	router.Use(middleware.ProxyHeaders)
 	router.Use(middleware.RecoveryHandler())
+	router.Use(func(h http.Handler) http.Handler {
+		return middleware.LoggingHandler(os.Stdout, h)
+	})
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		renderer.Render(w, nil, "layout.html", "error/404.html")
@@ -37,5 +40,5 @@ func (s *Server) RegisterRoutes() http.Handler {
 	authHandler := auth.NewAuthHandler(renderer, s.db)
 	authHandler.RegisterRoutes(router.PathPrefix("/auth").Subrouter())
 
-	return middleware.LoggingHandler(os.Stdout, router)
+	return router
 }
