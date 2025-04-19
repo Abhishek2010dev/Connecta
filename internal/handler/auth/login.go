@@ -48,7 +48,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userData == nil {
+	if userData == nil || !h.passwordService.VerifyPassword(payload.Password, userData.Password) {
 		data := map[string]any{
 			"Form": payload,
 			"Errors": map[string]string{
@@ -59,4 +59,6 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.setCookie(w, userData.Id)
+	w.Header().Set("HX-Redirect", "/")
 }
