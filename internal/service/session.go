@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -47,6 +49,8 @@ func (s *sessionServiceImpl) GenerateToken(userID int64) (string, error) {
 	return token, nil
 }
 
+var ErrSessionExpired = errors.New("session expired")
+
 func (s *sessionServiceImpl) ValidateToken(token string) (*models.Session, *dto.AuthPaylaod, error) {
 	sessionID := hashToken(token)
 	session, username, err := s.repo.FindByIDWithUsername(sessionID)
@@ -55,18 +59,18 @@ func (s *sessionServiceImpl) ValidateToken(token string) (*models.Session, *dto.
 	}
 
 	if time.Now().After(session.ExpiresAt) {
-		log.Println("Session expired. Deleting...")
+		log.Printf("Session %s expired. Deleting...\n", sessionID)
 		if _, err := s.repo.DeleteByID(sessionID); err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to delete expired session: %w", err)
 		}
-		return nil, nil, nil
+		return nil, nil, ErrSessionExpired
 	}
 
 	if time.Now().After(session.ExpiresAt.Add(-RenewBefore)) {
 		newExpiresAt := time.Now().Add(SessionDuration)
 		session.ExpiresAt = newExpiresAt
 		if _, err := s.repo.UpdateExpiration(sessionID, newExpiresAt); err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to renew session expiration: %w", err)
 		}
 	}
 
