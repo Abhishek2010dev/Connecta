@@ -38,8 +38,10 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emailExists, usernameExists, err := a.userRepository.
-		CheckEmailAndUsername(payload.Email, payload.Username)
+	emailExists, usernameExists, err := a.userRepository.CheckEmailAndUsername(
+		payload.Email,
+		payload.Username,
+	)
 	if err != nil {
 		log.Println(err)
 
