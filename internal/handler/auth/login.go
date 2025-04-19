@@ -57,6 +57,5 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
 		return
-
 	}
 }

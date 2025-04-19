@@ -1,5 +1,18 @@
 {{ define "login-form" }}
 <form class="space-y-6" hx-post="/auth/login" hx-target="this" hx-swap="outerHTML" novalidate>
+	{{if .Errors.general}}
+	<div class="rounded-md bg-red-50 p-4 border border-red-200">
+		<div class="flex">
+			<svg class="h-5 w-5 text-red-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24"
+				stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+			</svg>
+			<p class="text-sm text-red-700">{{.Errors.general}}</p>
+		</div>
+	</div>
+	{{end}}
+
 	<div>
 		<label for="email" class="block text-sm font-medium text-white">Email Address</label>
 		<input type="email" name="email" id="email" required autocomplete="email" value="{{.Form.Email}}"
