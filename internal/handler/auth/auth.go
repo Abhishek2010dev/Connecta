@@ -38,4 +38,5 @@ func (a *AuthHandler) RegisterRoutes(r chi.Router) {
 	r.Post("/register", a.RegisterHandler)
 
 	r.Get("/login", a.LoginPage)
+	r.Post("/login", a.LoginHandler)
 }

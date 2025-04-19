@@ -38,13 +38,14 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emailExists, usernameExists, err := a.userRepository.CheckEmailAndUsername(payload.Email, payload.Username)
+	emailExists, usernameExists, err := a.userRepository.
+		CheckEmailAndUsername(payload.Email, payload.Username)
 	if err != nil {
 		log.Println(err)
 
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
-			Message: "Something went wrong while checking your account details. Please try again later.",
+			Message: "Couldn't verify account details. Please try again.",
 		})
 		return
 	}
@@ -52,11 +53,11 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if usernameExists || emailExists {
 		errors := map[string]string{}
 		if usernameExists {
-			errors["username"] = "This username is already taken"
+			errors["username"] = "Username is already taken"
 		}
 
 		if emailExists {
-			errors["email"] = "This email is already registered"
+			errors["email"] = "Email is already registered"
 		}
 
 		data := map[string]any{
@@ -72,7 +73,7 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
-			Message: "Something went wrong while hashing password. Please try again later.",
+			Message: "Failed to process password. Try again.",
 		})
 		return
 	}
@@ -82,7 +83,7 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
-			Message: "Something went wrong while create your account. Please try again later.",
+			Message: "Couldn't create account. Please try again.",
 		})
 		return
 	}
@@ -92,12 +93,11 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
 			Title:   "Server Error",
-			Message: "Something went wrong while generating session token. Please try again later.",
+			Message: "Couldn't create session. Try again.",
 		})
 		return
 	}
 
 	setCookie(w, a.tokenName, token)
 	w.Header().Set("HX-Redirect", "/")
-
 }
