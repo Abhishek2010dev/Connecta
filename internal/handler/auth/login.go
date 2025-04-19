@@ -52,10 +52,11 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		data := map[string]any{
 			"Form": payload,
 			"Errors": map[string]string{
-				"email": "Email is not registered",
+				"general": "Invalid email or password",
 			},
 		}
 		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
 		return
 	}
+
 }

@@ -1,24 +1,22 @@
 {{ define "login-form" }}
 <form class="space-y-6" hx-post="/auth/login" hx-target="this" hx-swap="outerHTML" novalidate>
 	{{if .Errors.general}}
-	<div class="rounded-md bg-red-50 p-4 border border-red-200">
-		<div class="flex">
-			<svg class="h-5 w-5 text-red-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24"
-				stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-			</svg>
-			<p class="text-sm text-red-700">{{.Errors.general}}</p>
-		</div>
-	</div>
+	<p class="mt-1 flex items-center text-sm text-red-500" aria-live="assertive">
+		<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+				d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+		</svg>
+		{{.Errors.general}}
+	</p>
 	{{end}}
 
 	<div>
 		<label for="email" class="block text-sm font-medium text-white">Email Address</label>
 		<input type="email" name="email" id="email" required autocomplete="email" value="{{.Form.Email}}"
+			aria-describedby="email-error"
 			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 {{if .Errors.email}}ring-red-500 focus:ring-red-500{{else}}ring-gray-600 focus:ring-indigo-500{{end}} transition" />
 		{{if .Errors.email}}
-		<p class="mt-1 flex items-center text-sm text-red-500">
+		<p id="email-error" class="mt-1 flex items-center text-sm text-red-500">
 			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
@@ -30,10 +28,11 @@
 
 	<div>
 		<label for="password" class="block text-sm font-medium text-white">Password</label>
-		<input type="password" name="password" id="password" required autocomplete="new-password"
+		<input type="password" name="password" id="password" required autocomplete="current-password"
+			aria-describedby="password-error"
 			class="mt-2 block w-full rounded-lg bg-gray-800 px-3 py-2 text-white text-sm placeholder:text-gray-400 outline-none ring-1 {{if .Errors.password}}ring-red-500 focus:ring-red-500{{else}}ring-gray-600 focus:ring-indigo-500{{end}} transition" />
 		{{if .Errors.password}}
-		<p class="mt-1 flex items-center text-sm text-red-500">
+		<p id="password-error" class="mt-1 flex items-center text-sm text-red-500">
 			<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 					d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
@@ -46,7 +45,7 @@
 	<div>
 		<button type="submit"
 			class="flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition">
-			Register
+			Log In
 		</button>
 	</div>
 </form>
