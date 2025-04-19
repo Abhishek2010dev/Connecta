@@ -8,13 +8,13 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
 )
 
-func (a *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"Title":  "Register",
 		"Form":   dto.CreateUserPayload{},
 		"Errors": map[string]string{},
 	}
-	a.renderer.Render(
+	h.renderer.Render(
 		w,
 		data,
 		"pages/auth/layout.html",
@@ -23,22 +23,22 @@ func (a *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	payload := handler.ParseAndDecodeForm[dto.CreateUserPayload](w, r, a.decoder)
+func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	payload := handler.ParseAndDecodeForm[dto.CreateUserPayload](w, r, h.decoder)
 	if payload == nil {
 		return
 	}
 
-	if validationError := payload.Validate(a.validate); validationError != nil {
+	if validationError := payload.Validate(h.validate); validationError != nil {
 		data := map[string]any{
 			"Form":   payload,
 			"Errors": validationError,
 		}
-		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
+		h.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return
 	}
 
-	emailExists, usernameExists, err := a.userRepository.CheckEmailAndUsername(
+	emailExists, usernameExists, err := h.userRepository.CheckEmailAndUsername(
 		payload.Email,
 		payload.Username,
 	)
@@ -66,11 +66,11 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			"Form":   payload,
 			"Errors": errors,
 		}
-		a.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
+		h.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return
 	}
 
-	payload.Password, err = a.passwordService.HashPassword(payload.Password)
+	payload.Password, err = h.passwordService.HashPassword(payload.Password)
 	if err != nil {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
@@ -80,7 +80,7 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := a.userRepository.Create(payload)
+	userID, err := h.userRepository.Create(payload)
 	if err != nil {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
@@ -90,5 +90,6 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.setCookie(w, userID)
 	w.Header().Set("HX-Redirect", "/")
 }
