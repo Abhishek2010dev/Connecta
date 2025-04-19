@@ -8,8 +8,8 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
 )
 
-func (a *AuthHandler) setCookie(w http.ResponseWriter, userID int64) {
-	token, err := a.sessionService.GenerateToken(userID)
+func (h *AuthHandler) setCookie(w http.ResponseWriter, userID int64) {
+	token, err := h.sessionService.GenerateToken(userID)
 	if err != nil {
 		log.Println(err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{

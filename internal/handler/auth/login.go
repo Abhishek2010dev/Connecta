@@ -1,19 +1,20 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
 )
 
-func (a *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"Title":  "Login",
 		"Form":   dto.CreateUserPayload{},
 		"Errors": map[string]string{},
 	}
-	a.renderer.Render(
+	h.renderer.Render(
 		w,
 		data,
 		"pages/auth/layout.html",
@@ -22,9 +23,40 @@ func (a *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-func (a *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	payload := handler.ParseAndDecodeForm[dto.LoginUserPayload](w, r, a.decoder)
+func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	payload := handler.ParseAndDecodeForm[dto.LoginUserPayload](w, r, h.decoder)
 	if payload == nil {
 		return
+	}
+
+	if validationError := payload.Validate(h.validate); validationError != nil {
+		data := map[string]any{
+			"Form":   payload,
+			"Errors": validationError,
+		}
+		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
+		return
+	}
+
+	userData, err := h.userRepository.FindByEmail(payload.Email)
+	if err != nil {
+		log.Printf("Failed to fetch user by email: %s", err)
+		handler.RedirectToErrorPage(w, handler.ErrorResponse{
+			Title:   "Server Error",
+			Message: "Couldn't retrieve account information. Please try again.",
+		})
+		return
+	}
+
+	if userData == nil {
+		data := map[string]any{
+			"Form": payload,
+			"Errors": map[string]string{
+				"email": "Email is not registered",
+			},
+		}
+		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
+		return
+
 	}
 }

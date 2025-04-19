@@ -23,22 +23,21 @@ func RedirectToErrorPage(w http.ResponseWriter, error ErrorResponse) {
 }
 
 func ParseAndDecodeForm[T any](w http.ResponseWriter, r *http.Request, decoder *schema.Decoder) *T {
-	err := r.ParseForm()
-	if err != nil {
-		log.Printf("Failed to process request: %s", err)
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Failed to parse form: %s", err)
 		RedirectToErrorPage(w, ErrorResponse{
-			Title:   "Something went wrong",
-			Message: "We couldn't process your request. Please try again.",
+			Title:   "Request Error",
+			Message: "Couldn't process your request. Please try again.",
 		})
 		return nil
 	}
 
 	var payload T
 	if err := decoder.Decode(&payload, r.PostForm); err != nil {
-		log.Printf("Invalid submission: %s", err)
+		log.Printf("Failed to decode form: %s", err)
 		RedirectToErrorPage(w, ErrorResponse{
-			Title:   "Invalid submission",
-			Message: "There was an issue with the information you entered. Please review and try again.",
+			Title:   "Invalid Data",
+			Message: "Something’s wrong with your input. Please check and try again.",
 		})
 		return nil
 	}

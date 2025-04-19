@@ -77,10 +77,9 @@ func (u *userRepoImpl) FindByEmail(email string) (*models.User, error) {
 	err := row.Scan(&user.Id, &user.Name, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("User does not exist: %w", err)
+			return nil, nil
 		}
 		return nil, fmt.Errorf("Failed to find user by email %s: %w", email, err)
 	}
 	return &user, nil
 }
-
