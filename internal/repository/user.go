@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 	"github.com/Abhishek2010dev/Connecta/internal/models"
@@ -29,12 +30,11 @@ func (u *userRepoImpl) Create(payload *dto.CreateUserPayload) (int64, error) {
 		RETURNING id;
 	`
 	var userId int64
-	err := u.db.QueryRow(query, payload.Name, payload.Username, payload.Email, payload.Password).Scan(&userId)
+	err := u.db.QueryRow(query, payload.Name, payload.Username, strings.ToLower(payload.Email), payload.Password).Scan(&userId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, fmt.Errorf("Failed to create user: %w", err)
 		}
-		return 0, fmt.Errorf("Failed to scan userId: %w", err)
 	}
 
 	return userId, nil

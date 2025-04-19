@@ -3,6 +3,7 @@ package auth
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
@@ -38,7 +39,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userData, err := h.userRepository.FindByEmail(payload.Email)
+	userData, err := h.userRepository.FindByEmail(strings.ToLower(payload.Email))
 	if err != nil {
 		log.Printf("Failed to fetch user by email: %s", err)
 		handler.RedirectToErrorPage(w, handler.ErrorResponse{
