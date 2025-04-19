@@ -2,6 +2,8 @@ package auth
 
 import (
 	"database/sql"
+	"errors"
+	"net/http"
 
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/Abhishek2010dev/Connecta/internal/repository"
@@ -34,6 +36,17 @@ func NewAuthHandler(renderer renderer.Renderer, db *sql.DB) *AuthHandler {
 }
 
 func (a *AuthHandler) RegisterRoutes(r chi.Router) {
+	r.Use(func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, err := r.Cookie("authToken")
+			for !errors.Is(err, http.ErrNoCookie) {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+			h.ServeHTTP(w, r)
+		})
+	})
+
 	r.Get("/register", a.RegisterPage)
 	r.Post("/register", a.RegisterHandler)
 
