@@ -18,7 +18,7 @@ type AuthHandler struct {
 	userRepository  repository.User
 	decoder         *schema.Decoder
 	validate        *validator.Validate
-	tokenName       string
+	tokenKey        string
 }
 
 func NewAuthHandler(renderer renderer.Renderer, db *sql.DB) *AuthHandler {
@@ -29,7 +29,7 @@ func NewAuthHandler(renderer renderer.Renderer, db *sql.DB) *AuthHandler {
 		userRepository:  repository.NewUser(db),
 		decoder:         schema.NewDecoder(),
 		validate:        validator.New(),
-		tokenName:       "authToken",
+		tokenKey:        "authToken",
 	}
 }
 

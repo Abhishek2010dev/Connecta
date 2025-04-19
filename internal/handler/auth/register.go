@@ -90,16 +90,5 @@ func (a *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := a.sessionService.GenerateToken(userID)
-	if err != nil {
-		log.Println(err)
-		handler.RedirectToErrorPage(w, handler.ErrorResponse{
-			Title:   "Server Error",
-			Message: "Couldn't create session. Try again.",
-		})
-		return
-	}
-
-	setCookie(w, a.tokenName, token)
 	w.Header().Set("HX-Redirect", "/")
 }
