@@ -8,8 +8,8 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/Abhishek2010dev/Connecta/internal/repository"
 	"github.com/Abhishek2010dev/Connecta/internal/service"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 )
 
@@ -35,7 +35,7 @@ func NewAuthHandler(renderer renderer.Renderer, db *sql.DB) *AuthHandler {
 	}
 }
 
-func (a *AuthHandler) RegisterRoutes(r chi.Router) {
+func (h *AuthHandler) RegisterRoutes(r *mux.Router) {
 	r.Use(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, err := r.Cookie("authToken")
@@ -47,9 +47,9 @@ func (a *AuthHandler) RegisterRoutes(r chi.Router) {
 		})
 	})
 
-	r.Get("/register", a.RegisterPage)
-	r.Post("/register", a.RegisterHandler)
+	r.HandleFunc("/register", h.RegisterPage).Methods(http.MethodGet)
+	r.HandleFunc("/register", h.RegisterHandler).Methods(http.MethodPost)
 
-	r.Get("/login", a.LoginPage)
-	r.Post("/login", a.LoginHandler)
+	r.HandleFunc("/login", h.LoginPage).Methods(http.MethodGet)
+	r.HandleFunc("/login", h.LoginHandler).Methods(http.MethodPost)
 }
