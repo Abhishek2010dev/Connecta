@@ -39,7 +39,7 @@ func (a *AuthHandler) RegisterRoutes(r chi.Router) {
 	r.Use(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, err := r.Cookie("authToken")
-			for !errors.Is(err, http.ErrNoCookie) {
+			if !errors.Is(err, http.ErrNoCookie) {
 				http.Redirect(w, r, "/", http.StatusSeeOther)
 				return
 			}
