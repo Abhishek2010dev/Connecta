@@ -27,11 +27,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
-		error := handler.ErrorResponse{
+		errResp := handler.ErrorResponse{
 			Title:   query.Get("title"),
 			Message: query.Get("message"),
 		}
-		renderer.Render(w, error, "layout.html", "error/other.html")
+		renderer.Render(w, errResp, "layout.html", "error/other.html")
 	}).Methods(http.MethodGet)
 
 	fs := http.FileServer(http.Dir("static"))

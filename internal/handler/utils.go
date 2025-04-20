@@ -13,10 +13,10 @@ type ErrorResponse struct {
 	Message string
 }
 
-func RedirectToErrorPage(w http.ResponseWriter, error ErrorResponse) {
+func RedirectToErrorPage(w http.ResponseWriter, errorResp ErrorResponse) {
 	params := url.Values{}
-	params.Add("title", error.Title)
-	params.Add("message", error.Message)
+	params.Add("title", errorResp.Title)
+	params.Add("message", errorResp.Message)
 	target := "/error?" + params.Encode()
 
 	w.Header().Set("HX-Redirect", target)
