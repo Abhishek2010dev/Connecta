@@ -7,6 +7,7 @@ import (
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
 	"github.com/Abhishek2010dev/Connecta/internal/handler/auth"
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
+	"github.com/gorilla/csrf"
 	middleware "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -20,6 +21,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	router.Use(func(h http.Handler) http.Handler {
 		return middleware.LoggingHandler(os.Stdout, h)
 	})
+
+	CSRFMiddleware := csrf.Protect(
+		[]byte(s.cfg.Server.CsrfSecure),
+		csrf.Secure(false),
+		csrf.RequestHeader("X-CSRF-Token"),
+	)
+	router.Use(CSRFMiddleware)
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		renderer.Render(w, nil, "layout.html", "error/404.html")

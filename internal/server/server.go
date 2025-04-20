@@ -12,6 +12,7 @@ import (
 type Server struct {
 	db    *sql.DB
 	cache *redis.Client
+	cfg   config.Config
 }
 
 func New(cfg config.Config, db *sql.DB, cache *redis.Client) *http.Server {
