@@ -19,6 +19,7 @@ func New(cfg config.Config, db *sql.DB, cache *redis.Client) *http.Server {
 	NewServer := Server{
 		db:    db,
 		cache: cache,
+		cfg:   cfg,
 	}
 
 	server := &http.Server{

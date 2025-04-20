@@ -27,19 +27,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fs := http.FileServer(http.Dir("static"))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
-	protected := router.NewRoute().Subrouter()
-	protected.Use(csrf.Protect(
-		[]byte(s.cfg.Server.CsrfSecure),
+	router.Use(csrf.Protect(
+		[]byte(s.cfg.CsrfSecure),
 		csrf.Secure(false),
-		csrf.RequestHeader("X-CSRF-Token"),
+		csrf.RequestHeader(CSRFTokenKey),
 	))
 
-	protected.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(CSRFTokenKey, csrf.Token(r))
 		renderer.Render(w, nil, "layout.html", "error/404.html")
 	})
 
-	protected.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
 		errResp := handler.ErrorResponse{
 			Title:   query.Get("title"),
@@ -50,7 +49,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}).Methods(http.MethodGet)
 
 	authHandler := auth.NewAuthHandler(renderer, s.db)
-	authHandler.RegisterRoutes(protected.PathPrefix("/auth").Subrouter())
+	authHandler.RegisterRoutes(router.PathPrefix("/auth").Subrouter())
 
 	return router
 }

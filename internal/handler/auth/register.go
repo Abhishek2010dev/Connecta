@@ -6,6 +6,7 @@ import (
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
+	"github.com/gorilla/csrf"
 )
 
 func (h *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +14,8 @@ func (h *AuthHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 		"Title":  "Register",
 		"Form":   dto.CreateUserPayload{},
 		"Errors": map[string]string{},
+
+		csrf.TemplateTag: csrf.TemplateField(r),
 	}
 	h.renderer.Render(
 		w,
@@ -31,8 +34,9 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if validationError := payload.Validate(h.validate); validationError != nil {
 		data := map[string]any{
-			"Form":   payload,
-			"Errors": validationError,
+			"Form":           payload,
+			"Errors":         validationError,
+			csrf.TemplateTag: csrf.TemplateField(r),
 		}
 		h.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return
@@ -63,8 +67,9 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := map[string]any{
-			"Form":   payload,
-			"Errors": errors,
+			"Form":           payload,
+			"Errors":         errors,
+			csrf.TemplateTag: csrf.TemplateField(r),
 		}
 		h.renderer.RenderTemplate(w, "register-form", data, "components/register-form.html")
 		return

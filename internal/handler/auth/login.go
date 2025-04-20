@@ -7,13 +7,15 @@ import (
 
 	"github.com/Abhishek2010dev/Connecta/internal/dto"
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
+	"github.com/gorilla/csrf"
 )
 
 func (h *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
-		"Title":  "Login",
-		"Form":   dto.CreateUserPayload{},
-		"Errors": map[string]string{},
+		"Title":          "Login",
+		"Form":           dto.CreateUserPayload{},
+		"Errors":         map[string]string{},
+		csrf.TemplateTag: csrf.TemplateField(r),
 	}
 	h.renderer.Render(
 		w,
@@ -32,8 +34,9 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if validationError := payload.Validate(h.validate); validationError != nil {
 		data := map[string]any{
-			"Form":   payload,
-			"Errors": validationError,
+			"Form":           payload,
+			"Errors":         validationError,
+			csrf.TemplateTag: csrf.TemplateField(r),
 		}
 		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
 		return
@@ -55,6 +58,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			"Errors": map[string]string{
 				"general": "Invalid email or password",
 			},
+			csrf.TemplateTag: csrf.TemplateField(r),
 		}
 		h.renderer.RenderTemplate(w, "login-form", data, "components/login-form.html")
 		return
