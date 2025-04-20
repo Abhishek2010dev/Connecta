@@ -29,27 +29,37 @@ func (a *Auth) RequireAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		_, payload, err := a.sessionService.ValidateToken(cookie.Value)
+		session, payload, err := a.sessionService.ValidateToken(cookie.Value)
 		if err != nil {
 			if errors.Is(err, service.ErrSessionExpired) {
 				http.SetCookie(w, &http.Cookie{
-					Name:     "authToken",
-					Value:    "",
-					Path:     "/",
-					MaxAge:   -1,
-					HttpOnly: true,
+					Name:   "authToken",
+					Value:  "",
+					Path:   "/",
+					MaxAge: -1, HttpOnly: true,
 				})
 				http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 				return
 			}
 
 			log.Println("Token validation failed:", err)
-
 			handler.RedirectToErrorPage(w, handler.ErrorResponse{
 				Title:   "Session Error",
 				Message: "We couldn't verify your session. Please log in again.",
 			})
 			return
+		}
+
+		if !session.ExpiresAt.Equal(cookie.Expires) {
+			http.SetCookie(w, &http.Cookie{
+				Name:     "authToken",
+				Value:    cookie.Value,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteLaxMode,
+				Expires:  session.ExpiresAt,
+			})
 		}
 
 		ctx := context.WithValue(r.Context(), AuthPayloadKey, *payload)

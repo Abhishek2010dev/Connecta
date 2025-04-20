@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var CSRFTokenKey = "X-CSRF-Token"
+
 func (s *Server) RegisterRoutes() http.Handler {
 	router := mux.NewRouter()
 	renderer := renderer.New("templates")
@@ -22,31 +24,33 @@ func (s *Server) RegisterRoutes() http.Handler {
 		return middleware.LoggingHandler(os.Stdout, h)
 	})
 
-	CSRFMiddleware := csrf.Protect(
+	fs := http.FileServer(http.Dir("static"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+
+	protected := router.NewRoute().Subrouter()
+	protected.Use(csrf.Protect(
 		[]byte(s.cfg.Server.CsrfSecure),
 		csrf.Secure(false),
 		csrf.RequestHeader("X-CSRF-Token"),
-	)
-	router.Use(CSRFMiddleware)
+	))
 
-	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	protected.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set(CSRFTokenKey, csrf.Token(r))
 		renderer.Render(w, nil, "layout.html", "error/404.html")
 	})
 
-	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+	protected.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
 		errResp := handler.ErrorResponse{
 			Title:   query.Get("title"),
 			Message: query.Get("message"),
 		}
+		w.Header().Set(CSRFTokenKey, csrf.Token(r))
 		renderer.Render(w, errResp, "layout.html", "error/other.html")
 	}).Methods(http.MethodGet)
 
-	fs := http.FileServer(http.Dir("static"))
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-
 	authHandler := auth.NewAuthHandler(renderer, s.db)
-	authHandler.RegisterRoutes(router.PathPrefix("/auth").Subrouter())
+	authHandler.RegisterRoutes(protected.PathPrefix("/auth").Subrouter())
 
 	return router
 }

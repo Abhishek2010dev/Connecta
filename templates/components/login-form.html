@@ -1,5 +1,6 @@
 {{ define "login-form" }}
 <form class="space-y-6" hx-post="/auth/login" hx-target="this" hx-swap="outerHTML" novalidate>
+	<input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}" />
 	{{if .Errors.general}}
 	<p class="mt-1 flex items-center text-sm text-red-500" aria-live="assertive">
 		<svg class="mr-1 h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
