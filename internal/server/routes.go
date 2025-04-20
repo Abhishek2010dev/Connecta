@@ -6,6 +6,7 @@ import (
 
 	"github.com/Abhishek2010dev/Connecta/internal/handler"
 	"github.com/Abhishek2010dev/Connecta/internal/handler/auth"
+	"github.com/Abhishek2010dev/Connecta/internal/handler/pages"
 	"github.com/Abhishek2010dev/Connecta/internal/renderer"
 	"github.com/gorilla/csrf"
 	middleware "github.com/gorilla/handlers"
@@ -48,8 +49,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 		renderer.Render(w, errResp, "layout.html", "error/other.html")
 	}).Methods(http.MethodGet)
 
-	authHandler := auth.NewAuthHandler(renderer, s.db)
-	authHandler.RegisterRoutes(router.PathPrefix("/auth").Subrouter())
+	auth.NewAuthHandler(renderer, s.db).RegisterRoutes(router.PathPrefix("/auth").Subrouter())
+	pages.NewPages(renderer, s.db).RegisterRoutes(router.PathPrefix("/").Subrouter())
 
 	return router
 }
