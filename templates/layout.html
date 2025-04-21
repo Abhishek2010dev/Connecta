@@ -5,11 +5,12 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>{{ .Title }}</title>
-	<link href="/static/css/tailwind.css" rel="stylesheet" />
 	<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+	<link href="./static/css/output.css" rel="stylesheet" />
 </head>
 
-<body class="bg-[#030712]">
+<body class="bg-[#030712] min-h-screen dark">
+	{{template "sidebar" .}}
 	<main>{{block "content" .}} {{end}}</main>
 </body>
 

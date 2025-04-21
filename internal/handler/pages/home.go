@@ -5,5 +5,9 @@ import (
 )
 
 func (p *Pages) Home(w http.ResponseWriter, r *http.Request) {
-	p.renderer.Render(w, map[string]any{}, "layout.html", "pages/home.html")
+	payload := GetAuthPayload(r)
+	data := map[string]any{
+		"Username": payload.Username,
+	}
+	p.renderer.Render(w, data, "layout.html", "pages/home.html", "components/sidebar.html")
 }
