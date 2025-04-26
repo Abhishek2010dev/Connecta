@@ -11,9 +11,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/Abhishek2010dev/Connecta/internal/dto"
-	"github.com/Abhishek2010dev/Connecta/internal/models"
-	"github.com/Abhishek2010dev/Connecta/internal/repository"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/dto"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/models"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/repository"
 )
 
 const (

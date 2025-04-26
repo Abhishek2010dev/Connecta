@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Abhishek2010dev/Connecta/internal/dto"
-	"github.com/Abhishek2010dev/Connecta/internal/handler"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/dto"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/handler"
 	"github.com/gorilla/csrf"
 )
 
@@ -20,7 +20,7 @@ func (h *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	h.renderer.Render(
 		w,
 		data,
-		"pages/auth/layout.html",
+		"layout.html",
 		"pages/auth/login.html",
 		"components/login-form.html",
 	)

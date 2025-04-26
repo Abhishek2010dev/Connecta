@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Abhishek2010dev/Connecta/internal/handler"
-	"github.com/Abhishek2010dev/Connecta/internal/handler/auth"
-	"github.com/Abhishek2010dev/Connecta/internal/handler/pages"
-	"github.com/Abhishek2010dev/Connecta/internal/renderer"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/dto"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/handler"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/handler/auth"
+	customMiddleware "github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/middleware"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/renderer"
 	"github.com/gorilla/csrf"
 	middleware "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -50,7 +51,19 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}).Methods(http.MethodGet)
 
 	auth.NewAuthHandler(renderer, s.db).RegisterRoutes(router.PathPrefix("/auth").Subrouter())
-	pages.NewPages(renderer, s.db).RegisterRoutes(router.PathPrefix("/").Subrouter())
+
+	authMiddleware := customMiddleware.NewAuth(s.db)
+
+	protectedRoutes := router.PathPrefix("/").Subrouter()
+	protectedRoutes.Use(authMiddleware.RequireAuth)
+
+	protectedRoutes.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		payload := r.Context().Value(customMiddleware.AuthPayloadKey).(dto.AuthPaylaod)
+		data := map[string]string{
+			"Username": payload.Username,
+		}
+		renderer.Render(w, data, "layout.html", "pages/home.html")
+	})
 
 	return router
 }

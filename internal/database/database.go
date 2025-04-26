@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/Abhishek2010dev/Connecta/pkg/config"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/pkg/config"
 )
 
 type postgresqlDatabase struct {

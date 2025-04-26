@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Abhishek2010dev/Connecta/internal/renderer"
-	"github.com/Abhishek2010dev/Connecta/internal/repository"
-	"github.com/Abhishek2010dev/Connecta/internal/service"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/renderer"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/repository"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/service"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"

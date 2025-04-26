@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Abhishek2010dev/Connecta/internal/models"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/models"
 )
 
 // NOTE: I am returning sessionId in same function for just check

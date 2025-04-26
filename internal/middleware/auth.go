@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Abhishek2010dev/Connecta/internal/handler"
-	"github.com/Abhishek2010dev/Connecta/internal/service"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/handler"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/service"
 )
 
 type Auth struct {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Abhishek2010dev/Connecta/internal/handler"
+	"github.com/Abhishek2010dev/Go-Htmx-Auth-Example/internal/handler"
 )
 
 func (h *AuthHandler) setCookie(w http.ResponseWriter, userID int64) {
