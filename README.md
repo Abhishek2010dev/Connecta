@@ -2,16 +2,12 @@
 
 A simple authentication example built with **Go**, **Gorilla Toolkit**, **PostgreSQL**, **HTMX**, and **Tailwind CSS**.
 
----
-
 ## ✨ Features
 
 - 🔒 **Session-Based Authentication**
 - 🛡️ **CSRF Protection**
 - ⚡ **HTMX Frontend Interactions**
 - 🎨 **Tailwind CSS Styling**
-
----
 
 ## 🛠️ Stack
 
@@ -20,8 +16,6 @@ A simple authentication example built with **Go**, **Gorilla Toolkit**, **Postgr
 - 🛢️ **Database:** PostgreSQL
 - 🎨 **CSS Framework:** Tailwind CSS
 
----
-
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
@@ -29,8 +23,6 @@ A simple authentication example built with **Go**, **Gorilla Toolkit**, **Postgr
 - 🐹 Go (>=1.21)
 - 🐘 PostgreSQL (running and configured)
 - 🟰 Node.js (for Tailwind CLI)
-
----
 
 ### 📥 Installation
 
@@ -41,8 +33,6 @@ cd Go-Htmx-Auth-Example
 
 ✅ Set up your PostgreSQL database and update connection settings if needed inside the project.
 
----
-
 ### 🛠️ Building Tailwind CSS
 
 Before running the app, build the Tailwind CSS output:
@@ -51,8 +41,6 @@ Before running the app, build the Tailwind CSS output:
 npx @tailwindcss/cli -i ./style/input.css -o ./static/css/output.css
 ```
 
----
-
 ### 🏃 Running the App
 
 ```bash
@@ -60,8 +48,6 @@ go run cmd/api/main.go
 ```
 
 The server will start and listen on **localhost:4000** by default. 🌐
-
----
 
 ## 🗂️ Folder Structure
 
@@ -74,8 +60,6 @@ static/css/      → output CSS file
 templates/       → HTML templates (with HTMX)
 ```
 
----
-
 ## 📚 Credits
 
 Thanks to the awesome tools:
@@ -84,8 +68,6 @@ Thanks to the awesome tools:
 - [HTMX](https://htmx.org/) ⚡
 - [Tailwind CSS](https://tailwindcss.com/) 🌬️
 - [PostgreSQL](https://www.postgresql.org/) 🐘
-
----
 
 ## 📄 License
 
